@@ -17,7 +17,7 @@ page 50255 "Transform AL Files"
     {
         area(Processing)
         {
-            // TEST
+            // TEST 2
             action(Replacecode)
             {
                 ApplicationArea = All;

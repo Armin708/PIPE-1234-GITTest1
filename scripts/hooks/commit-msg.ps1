@@ -1,17 +1,16 @@
-#!/usr/bin/env pwsh
-. "$(Split-Path $MyInvocation.MyCommand.Path -Parent)\common.ps1"
+param([string]$commitMsgFile)
 
-param([string]$CommitMsgFile)
+# Read commit message
+$message = Get-Content $commitMsgFile -Raw
 
-Write-Info "Running commit-msg hook..."
+# Define regex pattern: TICKET-ID must be uppercase letters + number (e.g., CRM-123)
+$pattern = '^[A-Z]+-\d+: .+'
 
-$msg = Get-Content $CommitMsgFile -Raw
-if ($msg.Length -lt 5) {
-    Write-ErrorMsg "Commit message is too short."
-    exit 1
+if ($message -notmatch $pattern) {
+    Write-Host "❌ Commit message is invalid!" -ForegroundColor Red
+    Write-Host "Expected format: TICKETID: Description" -ForegroundColor Yellow
+    Write-Host "Example: CRM-123: Fixed issue with posting" -ForegroundColor Yellow
+    exit 1  # Abort commit
 }
 
-if ($msg -notmatch '^\[[A-Z]+-\d+\]') {
-    Write-ErrorMsg "Commit message must start with [TICKET-ID], e.g. [CRM-123]."
-    exit 1
-}
+Write-Host "✅ Commit message format is valid." -ForegroundColor Green
